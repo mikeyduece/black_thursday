@@ -35,5 +35,6 @@ class ItemRepo
       all.find do |item|
         item.description.include?
 
+      end
     end
 end

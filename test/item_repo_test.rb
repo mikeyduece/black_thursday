@@ -17,7 +17,9 @@ class ItemRepoTest < Minitest::Test
     assert_nil ir.find_by_id(5)
   end
 
-  def test_find_all_with_description
-    assert_equal 
-
 end
+
+#   def test_find_all_with_description
+#     assert_equal
+#
+# end
