@@ -1,4 +1,4 @@
-require_relative 'sales_analyst'
+require_relative 'sales_engine'
 require_relative 'stats'
 
 class SalesAnalyst
