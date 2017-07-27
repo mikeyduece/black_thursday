@@ -21,6 +21,11 @@ class InvoiceItem
     @updated_at = Time.parse(hash[:updated_at].to_s)
   end
 
+  def unit_price_to_dollar
+    @unit_price.to_f
+  end
+
+
 
 
 

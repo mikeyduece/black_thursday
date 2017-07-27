@@ -27,4 +27,10 @@ class InvoiceItemTest < Minitest::Test
   def test_big_d_functions
     assert_equal 0.1099e2, ii.unit_price
   end
+
+  def test_converts_to_float
+    assert_equal 0.1099e2, ii.unit_price_to_dollar
+
+  end
+
 end
