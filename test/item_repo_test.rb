@@ -11,4 +11,13 @@ class ItemRepoTest < Minitest::Test
   def test_find_all_items
    assert_equal 1367, ir.all.count
   end
+
+  def test_find_by_name
+    assert_equal Item, ir.find_by_name("Custom Hand Made Miniature Bicycle").class
+    assert_nil ir.find_by_id(5)
+  end
+
+  def test_find_all_with_description
+    assert_equal 
+
 end

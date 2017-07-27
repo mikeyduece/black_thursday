@@ -21,19 +21,19 @@ class ItemRepo
       items.values
     end
 
-    def find_by_id
+    def find_by_id(id)
       items[:id]
 
     end
 
-    def find_by_name
+    def find_by_name(name)
       all.find {|item| item.name.downcase == name.downcase}
-
 
     end
 
     def find_all_with_description
-
+      all.find do |item|
+        item.description.include?
 
     end
 end
