@@ -83,20 +83,24 @@ class SalesAnalyst
       (se.all_invoices.count).to_f * 100).round(2)
   end
 
-  def top_buyers(num=20)
-    wha = se.all_invoices.find_all {|invoice| invoice.is_paid_in_full?}
-    huh=wha.group_by {|invoice| invoice.customer_id}
-    sup=huh.each_value do |invoices|
-        invoices.map! do |invoice|
-          invoice.total
-        end
-    end
-    ranked = sup.keys.sort_by {|customer_id| huh[customer_id].reduce(:+)}.reverse
-    rawr=ranked.map do |id|
-      se.customers.find_by_id(id)
-    end
-    rawr[0...num]
+  def paid_invoices
+    se.all_invoices.find_all {|invoice| invoice.is_paid_in_full?}
+  end
 
+  def cust_id_grp
+    paid_invoices.group_by {|invoice| invoice.customer_id}
+  end
+
+  def ranked(params)
+    params.keys.sort_by {|customer_id| params[customer_id].reduce(:+)}.reverse
+  end
+
+  def top_buyers(num=20)
+    totals          = cust_id_grp.each_value do |invoices|
+                        invoices.map! {|invoice| invoice.total}
+                      end
+    customer_list   = ranked(totals).map {|id| se.customers.find_by_id(id)}
+    customer_list[0...num]
   end
 
 end

@@ -82,4 +82,7 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 16, sa.top_buyers.count
   end
 
+  def test_can_return_less_than_20_buyers
+    assert_equal 5, sa.top_buyers(5).count
+  end
 end
