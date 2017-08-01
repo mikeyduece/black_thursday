@@ -89,9 +89,9 @@ class SalesAnalyst
     sup=huh.each_value do |invoices|
         invoices.map! do |invoice|
           invoice.total
-        end.reduce(:+)
+        end
     end
-    ranked = sup.keys.sort_by {|customer_id| huh[customer_id]}.reverse
+    ranked = sup.keys.sort_by {|customer_id| huh[customer_id].reduce(:+)}.reverse
     rawr=ranked.map do |id|
       se.customers.find_by_id(id)
     end
