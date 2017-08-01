@@ -88,4 +88,8 @@ class SalesEngine
   def all_customers
     customers.all
   end
+
+  def all_transactions
+    transactions.all
+  end
 end

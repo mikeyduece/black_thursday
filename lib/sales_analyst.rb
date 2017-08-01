@@ -84,8 +84,19 @@ class SalesAnalyst
   end
 
   def top_buyers(num=20)
-    cust_ids = se.all_invoices.group_by {|invoice| invoice.customer_id}
-    require "pry"; binding.pry
+    wha = se.all_invoices.find_all {|invoice| invoice.is_paid_in_full?}
+    huh=wha.group_by {|invoice| invoice.customer_id}
+    sup=huh.each_value do |invoices|
+        invoices.map! do |invoice|
+          invoice.total
+        end.reduce(:+)
+    end
+    ranked = sup.keys.sort_by {|customer_id| huh[customer_id]}.reverse
+    rawr=ranked.map do |id|
+      se.customers.find_by_id(id)
+    end
+    rawr[0...num]
+
   end
 
 end
