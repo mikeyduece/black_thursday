@@ -39,12 +39,12 @@ class Invoice
     parent.total(id)
   end
 
-  def get_invoice_items
+  def invoice_items
     parent.parent.invoice_items.find_all_by_invoice_id(id)
   end
 
   def quantity
-    get_invoice_items.reduce(0) {|sum,inv_item| sum + inv_item.quantity}
+    invoice_items.reduce(0) {|sum,inv_item| sum + inv_item.quantity}
   end
 
 end

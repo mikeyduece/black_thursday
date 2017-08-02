@@ -113,7 +113,11 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_returns_best_invoice_by_quantity
-    assert_instance_of Invoice, sa.best_invoice_by_revenue
-    assert_equal 3485, sa.best_invoice_by_revenue.id
+    assert_instance_of Invoice, sa.best_invoice_by_quantity
+    assert_equal 3248, sa.best_invoice_by_quantity.id
+  end
+
+  def test_it_returns_one_time_buyers
+    assert_instance_of Customer, sa.one_time_buyers[0]
   end
 end
