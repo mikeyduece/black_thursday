@@ -117,8 +117,9 @@ class SalesAnalyst
     cust_inv = customer.invoices
     cust_inv_items = cust_inv.map {|invoice| invoice.get_invoice_items}.flatten!
     cust_item_ids = cust_inv_items.group_by {|inv_item| inv_item.item_id}
-    cust_items = cust_item_ids.keys.inject({}) do |key, item|
-      key[item] = cust_item_ids[item][0].quantity; key
+    cust_items = cust_item_ids.keys.reduce({}) do |result, item|
+      result[item] = cust_item_ids[item][0].quantity
+      result
     end
     cust_items_sorted = cust_items.keys.select do |key|
       cust_items[key] == cust_items.values.max
@@ -137,7 +138,14 @@ class SalesAnalyst
     cust_ids.keys.map {|id| se.customers.find_by_id(id)}
   end
 
-  def method_name
-
+  def best_invoice_by_revenue
+    invoice_ids = paid_invoices.group_by {|invoice| invoice.id}
+    invoice_totals = invoice_ids.each_value do |invoices|
+      invoices.map! do |invoice|
+        invoice.total
+        end
+    end
+    invoice = invoice_totals.keys.sort_by {|id| invoice_totals[id]}.reverse
+    se.invoices.find_by_id(invoice[0])
   end
 end

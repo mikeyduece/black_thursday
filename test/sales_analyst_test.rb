@@ -106,4 +106,14 @@ class SalesAnalystTest < Minitest::Test
     assert_instance_of Customer, sa.customers_with_unpaid_invoices[0]
     assert_equal 52, sa.customers_with_unpaid_invoices[0].id
   end
+
+  def test_finds_best_invoice_by_revenue
+    assert_instance_of Invoice, sa.best_invoice_by_revenue
+    assert_equal 3485, sa.best_invoice_by_revenue.id
+  end
+
+  def test_returns_best_invoice_by_quantity
+    assert_instance_of Invoice, sa.best_invoice_by_revenue
+    assert_equal 3485, sa.best_invoice_by_revenue.id
+  end
 end
