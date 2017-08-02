@@ -165,18 +165,10 @@ class SalesAnalyst
   end
 
   def one_time_buyers
-    # invoices = paid_invoices.group_by {|invoice| invoice.id}
-    # inv_trans = invoices.keys.map do |invoice_id|
-    #   se.transactions.find_all_by_invoice_id(invoice_id)
-    # end.flatten
-    # inv_trans_ids = inv_trans.group_by {|trans| trans.invoice_id}
-    # buyers = []
-    # inv_trans_ids.each do |id, trans|
-    #   buyers << id if trans.count == 1
-    # end
-    # one_trans_inv = buyers.map {|id| se.invoices.find_by_id(id)}
-    # one_trans_inv.map do |invoice|
-    #   se.customers.find_by_id(invoice.id)
-    # end
+    invoices = paid_invoices.select do |invoice|
+      invoice if invoice.transactions.count == 1
+    end
+    customers = invoices.map {|invoice| invoice.customer}
+    customers.select {|customer| customer if customer.invoices.count == 1}
   end
 end

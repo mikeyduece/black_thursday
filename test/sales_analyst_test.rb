@@ -119,5 +119,6 @@ class SalesAnalystTest < Minitest::Test
 
   def test_it_returns_one_time_buyers
     assert_instance_of Customer, sa.one_time_buyers[0]
+    assert_equal 28, sa.one_time_buyers[0].id
   end
 end
