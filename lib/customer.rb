@@ -19,4 +19,8 @@ class Customer
     parent.invoices(id)
   end
 
+  def invoice_items
+    parent.get_invoice_items(id)
+  end
+
 end

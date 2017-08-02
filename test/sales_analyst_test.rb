@@ -19,7 +19,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_it_can_calculate_average_items_per_merchant
-    assert_equal 1.5, sa.average_items_per_merchant
+    assert_equal 2.75, sa.average_items_per_merchant
   end
 
   def test_it_can_calculate_std_deviation_for_avg_items_per_merchant
@@ -40,7 +40,7 @@ class SalesAnalystTest < Minitest::Test
   def test_it_can_avg_the_avgs_of_all_merchant_prices
     actual = sa.average_average_price_per_merchant
     assert_instance_of BigDecimal, actual
-    assert_equal 0.05, actual
+    assert_equal 0.16735e3, actual
   end
 
   def test_it_can_find_golden_items
@@ -92,6 +92,18 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_returns_all_items_bought_in_a_year
-    assert_instance_of Item, sa.items_bought_in_a_year(14, 2012)[0]
+    assert_instance_of Item, sa.items_bought_in_year(232, 2014)[0]
+    assert_equal 263462761, sa.items_bought_in_year(232, 2014)[0].id
+    assert_equal 5, sa.items_bought_in_year(232, 2014).count
+  end
+
+  def test_it_returns_highest_volume_items
+    assert_instance_of Item, sa.highest_volume_items(232)[0]
+    assert_equal 263542298, sa.highest_volume_items(232)[0].id
+  end
+
+  def test_it_returns_deadbeat_customers
+    assert_instance_of Customer, sa.customers_with_unpaid_invoices[0]
+    assert_equal 52, sa.customers_with_unpaid_invoices[0].id
   end
 end
