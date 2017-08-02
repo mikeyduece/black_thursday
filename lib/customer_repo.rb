@@ -20,6 +20,10 @@ class CustomerRepo
     customers.values
   end
 
+  def invoices(id)
+    parent.invoices_of_customer(id)
+  end
+
   def find_by_id(id)
     customers[id]
   end
@@ -31,4 +35,12 @@ class CustomerRepo
   def find_all_by_last_name(l_name)
     all.find_all {|cust| cust.last_name.downcase.include?(l_name.downcase)}
   end
+
+  def customers_merchants(id)
+    parent.customers_merchants(id)
+  end
+
+  # def get_invoice_items(id)
+  #   parent.invoice_items.find_all_by_invoice_id(id)
+  # end
 end

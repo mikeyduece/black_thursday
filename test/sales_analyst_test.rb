@@ -19,11 +19,11 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_it_can_calculate_average_items_per_merchant
-    assert_equal 2.0, sa.average_items_per_merchant
+    assert_equal 1.5, sa.average_items_per_merchant
   end
 
   def test_it_can_calculate_std_deviation_for_avg_items_per_merchant
-    assert_equal 0.47, sa.average_items_per_merchant_standard_deviation
+    assert_equal 0.44, sa.average_items_per_merchant_standard_deviation
   end
 
   def test_it_can_determine_merchants_with_high_item_count
@@ -49,12 +49,12 @@ class SalesAnalystTest < Minitest::Test
 
   def test_it_can_return_avg_invoices_per_merchant
     actual = sa.average_invoices_per_merchant
-    assert_equal 9.67, actual
+    assert_equal 9.25, actual
   end
 
   def test_it_can_find_avg_invoices_per_merchant_std_dev
     actual = sa.average_invoices_per_merchant_standard_deviation
-    assert_equal 2.05, actual
+    assert_equal 3.77, actual
   end
 
   def test_it_returns_top_performing_merchants
@@ -75,7 +75,7 @@ class SalesAnalystTest < Minitest::Test
 
   def test_it_returns_percentage_of_pending_status
     actual = sa.invoice_status(:pending)
-    assert_equal 20.69, actual
+    assert_equal 29.73, actual
   end
 
   def test_it_can_determine_top_buyers
@@ -84,5 +84,10 @@ class SalesAnalystTest < Minitest::Test
 
   def test_can_return_less_than_20_buyers
     assert_equal 5, sa.top_buyers(5).count
+  end
+
+  def test_returns_customers_fav_merchant
+    assert_instance_of Merchant, sa.top_merchant_for_customer(14)
+    assert_equal 12335938, sa.top_merchant_for_customer(14).id
   end
 end

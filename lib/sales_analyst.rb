@@ -83,18 +83,6 @@ class SalesAnalyst
       (se.all_invoices.count).to_f * 100).round(2)
   end
 
-  def paid_invoices
-    se.all_invoices.find_all {|invoice| invoice.is_paid_in_full?}
-  end
-
-  def cust_id_grp
-    paid_invoices.group_by {|invoice| invoice.customer_id}
-  end
-
-  def ranked(params)
-    params.keys.sort_by {|customer_id| params[customer_id].reduce(:+)}.reverse
-  end
-
   def top_buyers(num=20)
     totals          = cust_id_grp.each_value do |invoices|
                         invoices.map! {|invoice| invoice.total}
@@ -103,4 +91,15 @@ class SalesAnalyst
     customer_list[0...num]
   end
 
+  def top_merchant_for_customer(id)
+    customer = se.customers.find_by_id(id)
+    max_quan = customer.invoices.max_by do |invoice|
+      invoice.quantity
+    end
+    invoice_max = se.invoices.find_by_id(max_quan.id)
+    se.merchants.find_by_id(invoice_max.merchant_id)
+  end
+
+# take cool and group by invoice_id > take that back over to the huh array of customer_invocies
+# group that by merchant_id and find all by merchant id
 end

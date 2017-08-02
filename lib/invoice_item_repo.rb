@@ -32,5 +32,9 @@ class InvoiceItemRepo
     all.find_all {|invoice_item| invoice_item.invoice_id == inv_id}
   end
 
+  def get_invoice_items(id)
+    parent.get_invoice_items(id)
+  end
+
 
 end

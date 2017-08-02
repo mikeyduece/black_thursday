@@ -101,5 +101,17 @@ module Stats
     se.all_invoices.group_by {|invoice| invoice.status}
   end
 
+  def paid_invoices
+    se.all_invoices.find_all {|invoice| invoice.is_paid_in_full?}
+  end
+
+  def cust_id_grp
+    paid_invoices.group_by {|invoice| invoice.customer_id}
+  end
+
+  def ranked(params)
+    params.keys.sort_by {|customer_id| params[customer_id].reduce(:+)}.reverse
+  end
+
 
 end

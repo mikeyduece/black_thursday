@@ -34,16 +34,29 @@ class SalesEngine
     merchant_list.map {|invoice| invoice.customer}.uniq
   end
 
+  def customers_merchants(id)
+    customer_list = invoices.find_all_by_customer_id(id)
+    customer_list.map {|invoice| invoice.merchant}
+  end
+
+  def get_invoice_items(id)
+    invoice_items.find_all_by_invoice_id(id)
+  end
+
   def transaction_invoice(id)
     invoices.find_by_id(id)
   end
 
-  def customer_invocies(id)
+  def customer_invoices(id)
     customers.find_by_id(id)
   end
 
   def invoice_transactions(id)
     transactions.find_all_by_invoice_id(id)
+  end
+
+  def invoices_of_customer(id)
+    invoices.find_all_by_customer_id(id)
   end
 
   def items_from_invoice(id)
