@@ -19,19 +19,4 @@ class Customer
     parent.invoices(id)
   end
 
-  # def get_invoice_items
-  #   invoices.map do |invoice|
-  #     parent.get_invoice_items(invoice.id)
-  #   end
-  # end
-  #
-  # def get_invoice_quantity
-  #   get_invoice_items.max_by do |invoice_item|
-  #     require "pry"; binding.pry
-  #     invoice_item.quantity
-  #   end
-  # end
-
-
-
 end

@@ -88,6 +88,10 @@ class SalesAnalystTest < Minitest::Test
 
   def test_returns_customers_fav_merchant
     assert_instance_of Merchant, sa.top_merchant_for_customer(14)
-    assert_equal 12335938, sa.top_merchant_for_customer(14).id
+    assert_equal 12334105, sa.top_merchant_for_customer(14).id
+  end
+
+  def test_returns_all_items_bought_in_a_year
+    assert_instance_of Item, sa.items_bought_in_a_year(14, 2012)[0]
   end
 end

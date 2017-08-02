@@ -40,7 +40,4 @@ class CustomerRepo
     parent.customers_merchants(id)
   end
 
-  # def get_invoice_items(id)
-  #   parent.invoice_items.find_all_by_invoice_id(id)
-  # end
 end

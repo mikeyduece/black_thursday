@@ -100,6 +100,18 @@ class SalesAnalyst
     se.merchants.find_by_id(invoice_max.merchant_id)
   end
 
-# take cool and group by invoice_id > take that back over to the huh array of customer_invocies
-# group that by merchant_id and find all by merchant id
+  def items_bought_in_a_year(cust_id, year)
+
+    customer = se.customers.find_by_id(cust_id)
+    cust_inv = customer.invoices
+    cust_inv_ids = cust_inv.group_by {|invoice| invoice.id}
+    cust_inv_items = cust_inv_ids.keys.map do |id|
+                      se.invoice_items.find_all_by_invoice_id(id)
+                    end.flatten
+    huh=cust_inv_items.find_all do |invoice_item|
+      invoice_item.created_at.to_s.split("-")[0].to_i == year
+    end
+    require "pry"; binding.pry
+  end
+
 end
