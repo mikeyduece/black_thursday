@@ -51,4 +51,20 @@ module InvoiceAnalyst
     std_dev = standard_deviation(info) * 2
     avg - std_dev
   end
+
+  def invoice_totals(invoice_ids)
+    invoice_ids.each_value do |invoices|
+      invoices.map! {|invoice| invoice.total}
+    end
+  end
+
+  def top_invoices
+    invoice_ids = paid_invoices.group_by {|invoice| invoice.id}
+    inv_totals  = invoice_totals(invoice_ids)
+    inv_totals.keys.sort_by {|id| inv_totals[id]}.reverse
+  end
+
+  def one_transaction_invoices
+    paid_invoices.select {|invoice| invoice if invoice.transactions.count == 1}
+  end
 end

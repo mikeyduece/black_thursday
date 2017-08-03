@@ -16,4 +16,18 @@ module ItemsAnalyst
     end
   end
 
+  def one_time_customer_items
+    cust_invs = one_time_buyers_invoices
+    items = cust_invs.map {|invoice| invoice.items}.flatten.compact
+    items.group_by {|item| item.id}
+  end
+
+  def items_group_by_ids
+    items_grp = one_time_customer_items
+    items_grp.max_by do |key|
+      items_grp[key[0]].count
+    end
+  end
+
+
 end

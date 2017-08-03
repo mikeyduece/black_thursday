@@ -1,4 +1,5 @@
 module MerchantAnalyst
+
   def one_standard_deviation_bar
     avg     = average_items_per_merchant
     std_dev = average_items_per_merchant_standard_deviation
@@ -22,6 +23,6 @@ module MerchantAnalyst
   end
 
   def bad_merchants(array, merchant, invoices, bar)
-    array <<merchant if invoices < bar
+    array << merchant if invoices < bar
   end
 end

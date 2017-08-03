@@ -2,7 +2,6 @@ require_relative 'sales_engine'
 require_relative 'rick_roll'
 
 class SalesAnalyst < RickRoll
-  include Stats
   attr_reader :se
 
   def initialize(se)
@@ -92,8 +91,7 @@ class SalesAnalyst < RickRoll
   end
 
   def top_merchant_for_customer(id)
-    customer = se.customers.find_by_id(id)
-    max_quan = customer.invoices.max_by do |invoice|
+    max_quan = customer(id).invoices.max_by do |invoice|
       invoice.quantity
     end
     invoice_max = se.invoices.find_by_id(max_quan.id)
@@ -101,85 +99,41 @@ class SalesAnalyst < RickRoll
   end
 
   def items_bought_in_year(cust_id, year)
-    customer = se.customers.find_by_id(cust_id)
-    cust_inv = customer.invoices.find_all {|invoice| invoice.is_paid_in_full?}
-    cust_inv_year = cust_inv.find_all do |invoice|
-                      invoice.created_at.to_s.split("-")[0].to_i == year
-                     end
-    cust_inv_items = cust_inv_year.map do |invoice|
-                      se.invoice_items.find_all_by_invoice_id(invoice.id)
-                    end.flatten
-    cust_inv_items.map {|inv_item| se.items.find_by_id(inv_item.item_id)}
+    cust_inv_items(cust_id, year).map do |inv_item|
+      se.items.find_by_id(inv_item.item_id)
+    end
   end
 
   def highest_volume_items(id)
-    customer = se.customers.find_by_id(id)
-    cust_inv = customer.invoices
-    cust_inv_items = cust_inv.map {|invoice| invoice.invoice_items}.flatten!
-    cust_item_ids = cust_inv_items.group_by {|inv_item| inv_item.item_id}
-    cust_items = cust_item_ids.keys.reduce({}) do |result, item|
-      result[item] = cust_item_ids[item][0].quantity
-      result
+    cust_inv = customer(id).invoices
+    cust_items_sorted = cust_items_count(cust_inv).keys.select do |key|
+      cust_items_count(cust_inv)[key] == cust_items_count(cust_inv).values.max
     end
-    cust_items_sorted = cust_items.keys.select do |key|
-      cust_items[key] == cust_items.values.max
-    end
-    cust_items_sorted.map do |id|
-      se.items.find_by_id(id)
-    end
+    sorted_items_list(cust_items_sorted)
   end
 
-  # def unpaid_invoices
-  #   se.all_invoices.find_all {|invoice| !invoice.is_paid_in_full?}
-  # end
-  #
-  # def customers_with_unpaid_invoices
-  #   cust_ids = unpaid_invoices.group_by {|invoice| invoice.customer_id}
-  #   cust_ids.keys.map {|id| se.customers.find_by_id(id)}
-  # end
+  def customers_with_unpaid_invoices
+    cust_ids = unpaid_invoices.group_by {|invoice| invoice.customer_id}
+    cust_ids.keys.map {|id| se.customers.find_by_id(id)}
+  end
 
   def best_invoice_by_revenue
-    invoice_ids = paid_invoices.group_by {|invoice| invoice.id}
-    invoice_totals = invoice_ids.each_value do |invoices|
-      invoices.map! {|invoice| invoice.total}
-    end
-    invoice = invoice_totals.keys.sort_by {|id| invoice_totals[id]}.reverse
-    se.invoices.find_by_id(invoice[0])
+    se.invoices.find_by_id(top_invoices[0])
   end
 
   def best_invoice_by_quantity
-    invoices = paid_invoices.group_by {|invoice| invoice.id}
-    cust_inv_items = invoices.each_value do |invoices|
-        invoices.map! do |invoice|
-          invoice.invoice_items
-        end.flatten!
-      end
-    cust_invs = cust_inv_items.keys.reduce({}) do |result, inv|
-          result[inv] = cust_inv_items[inv].map{|item| item.quantity}.reduce(:+)
-        result
-    end
-    cust_inv_sorted = cust_invs.keys.sort_by do |key|
-      cust_invs[key]
-    end.reverse
+    cust_inv_sorted = sorted_invoices_by_quantity
     se.invoices.find_by_id(cust_inv_sorted[1])
   end
 
   def one_time_buyers
-    invoices = paid_invoices.select do |invoice|
-      invoice if invoice.transactions.count == 1
-    end
-    customers = invoices.map {|invoice| invoice.customer}
+    customers = one_invoice_customers
     customers.select {|customer| customer if customer.invoices.count == 1}
   end
 
   def one_time_buyers_top_items
-  cust_invs = one_time_buyers.map {|customer| customer.invoices}.flatten.compact
-  items = cust_invs.map {|invoice| invoice.items}.flatten.compact
-  items_grp = items.group_by {|item| item.id}
-  id = items_grp.max_by do |key|
-    items_grp[key[0]].count
+    id  = items_group_by_ids
+    [se.items.find_by_id(id[0])]
   end
-  top = [se.items.find_by_id(id[0])]
-  top
-  end
+
 end
