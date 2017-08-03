@@ -13,7 +13,7 @@ class CustomerRepoTest < Minitest::Test
   end
 
   def test_returns_all_merchants
-    assert_equal 101, cr.all.count
+    assert_equal 102, cr.all.count
   end
 
   def test_it_can_find_by_id

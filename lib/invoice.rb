@@ -28,7 +28,7 @@ class Invoice
   end
 
   def customer
-    parent.customer_invocies(customer_id)
+    parent.customer_invoices(customer_id)
   end
 
   def is_paid_in_full?
@@ -38,4 +38,13 @@ class Invoice
   def total
     parent.total(id)
   end
+
+  def invoice_items
+    parent.parent.invoice_items.find_all_by_invoice_id(id)
+  end
+
+  def quantity
+    invoice_items.reduce(0) {|sum,inv_item| sum + inv_item.quantity}
+  end
+
 end

@@ -1,8 +1,7 @@
 require_relative 'sales_engine'
-require_relative 'stats'
+require_relative 'rick_roll'
 
-class SalesAnalyst
-  include Stats
+class SalesAnalyst < RickRoll
   attr_reader :se
 
   def initialize(se)
@@ -84,8 +83,57 @@ class SalesAnalyst
   end
 
   def top_buyers(num=20)
-    cust_ids = se.all_invoices.group_by {|invoice| invoice.customer_id}
-    require "pry"; binding.pry
+    totals          = cust_id_grp.each_value do |invoices|
+                        invoices.map! {|invoice| invoice.total}
+                      end
+    customer_list   = ranked(totals).map {|id| se.customers.find_by_id(id)}
+    customer_list[0...num]
+  end
+
+  def top_merchant_for_customer(id)
+    max_quan = customer(id).invoices.max_by do |invoice|
+      invoice.quantity
+    end
+    invoice_max = se.invoices.find_by_id(max_quan.id)
+    se.merchants.find_by_id(invoice_max.merchant_id)
+  end
+
+  def items_bought_in_year(cust_id, year)
+    cust_inv_items(cust_id, year).map do |inv_item|
+      se.items.find_by_id(inv_item.item_id)
+    end
+  end
+
+  def highest_volume_items(id)
+    cust_inv = customer(id).invoices
+    cust_items_sorted = cust_items_count(cust_inv).keys.select do |key|
+      cust_items_count(cust_inv)[key] == cust_items_count(cust_inv).values.max
+    end
+    sorted_items_list(cust_items_sorted)
+  end
+
+  def customers_with_unpaid_invoices
+    cust_ids = unpaid_invoices.group_by {|invoice| invoice.customer_id}
+    cust_ids.keys.map {|id| se.customers.find_by_id(id)}
+  end
+
+  def best_invoice_by_revenue
+    se.invoices.find_by_id(top_invoices[0])
+  end
+
+  def best_invoice_by_quantity
+    cust_inv_sorted = sorted_invoices_by_quantity
+    se.invoices.find_by_id(cust_inv_sorted[1])
+  end
+
+  def one_time_buyers
+    customers = one_invoice_customers
+    customers.select {|customer| customer if customer.invoices.count == 1}
+  end
+
+  def one_time_buyers_top_items
+    id  = items_group_by_ids
+    [se.items.find_by_id(id[0])]
   end
 
 end

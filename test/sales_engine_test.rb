@@ -78,6 +78,11 @@ class SalesEngineTest < Minitest::Test
     assert_equal 1, merchant.customers.count
   end
 
+  def test_it_returns_merchants_that_customer_shopped_at
+    customer = se.customers.find_by_id(348)
+    assert_instance_of Merchant, customer.merchants[0]
+  end
+
   def test_it_can_tell_if_invoice_paid
     invoice = se.invoices.find_by_id(46)
     assert invoice.is_paid_in_full?
