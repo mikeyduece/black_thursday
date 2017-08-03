@@ -121,4 +121,10 @@ class SalesAnalystTest < Minitest::Test
     assert_instance_of Customer, sa.one_time_buyers[0]
     assert_equal 28, sa.one_time_buyers[0].id
   end
+
+  def test_it_can_find_item_one_time_buyers_bought_most
+    assert_instance_of Item, sa.one_time_buyers_top_items[0]
+    assert_equal 263462761, sa.one_time_buyers_top_items[0].id
+    assert_equal 1, sa.one_time_buyers_top_items.count
+  end
 end

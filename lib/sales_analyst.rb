@@ -1,7 +1,7 @@
 require_relative 'sales_engine'
-require_relative 'stats'
+require_relative 'rick_roll'
 
-class SalesAnalyst
+class SalesAnalyst < RickRoll
   include Stats
   attr_reader :se
 
@@ -129,14 +129,14 @@ class SalesAnalyst
     end
   end
 
-  def unpaid_invoices
-    se.all_invoices.find_all {|invoice| !invoice.is_paid_in_full?}
-  end
-
-  def customers_with_unpaid_invoices
-    cust_ids = unpaid_invoices.group_by {|invoice| invoice.customer_id}
-    cust_ids.keys.map {|id| se.customers.find_by_id(id)}
-  end
+  # def unpaid_invoices
+  #   se.all_invoices.find_all {|invoice| !invoice.is_paid_in_full?}
+  # end
+  #
+  # def customers_with_unpaid_invoices
+  #   cust_ids = unpaid_invoices.group_by {|invoice| invoice.customer_id}
+  #   cust_ids.keys.map {|id| se.customers.find_by_id(id)}
+  # end
 
   def best_invoice_by_revenue
     invoice_ids = paid_invoices.group_by {|invoice| invoice.id}
@@ -155,7 +155,7 @@ class SalesAnalyst
         end.flatten!
       end
     cust_invs = cust_inv_items.keys.reduce({}) do |result, inv|
-          result[inv] = cust_inv_items[inv].map {|item| item.quantity}.reduce(:+)
+          result[inv] = cust_inv_items[inv].map{|item| item.quantity}.reduce(:+)
         result
     end
     cust_inv_sorted = cust_invs.keys.sort_by do |key|
@@ -170,5 +170,16 @@ class SalesAnalyst
     end
     customers = invoices.map {|invoice| invoice.customer}
     customers.select {|customer| customer if customer.invoices.count == 1}
+  end
+
+  def one_time_buyers_top_items
+  cust_invs = one_time_buyers.map {|customer| customer.invoices}.flatten.compact
+  items = cust_invs.map {|invoice| invoice.items}.flatten.compact
+  items_grp = items.group_by {|item| item.id}
+  id = items_grp.max_by do |key|
+    items_grp[key[0]].count
+  end
+  top = [se.items.find_by_id(id[0])]
+  top
   end
 end
